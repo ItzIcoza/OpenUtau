@@ -123,14 +123,13 @@ namespace OpenUtau.App.Views {
                 CommandParameter = edit,
             }));
             ViewModel.ResetBatchEdits.AddRange(new List<BatchEdit>() {
-                new ResetAllParameters(),
+                new ResetAll(),
                 new ResetPitchBends(),
                 new ResetAllExpressions(),
                 new ClearVibratos(),
                 new ResetVibratos(),
                 new ClearTimings(),
                 new ResetAliases(),
-                new ResetAll(),
             }.Select(edit => new MenuItemViewModel() {
                 Header = ThemeManager.GetString(edit.Name),
                 Command = noteBatchEditCommand,
@@ -225,6 +224,11 @@ namespace OpenUtau.App.Views {
             Preferences.Save();
             ViewModel.RaisePropertyChanged(nameof(ViewModel.UseTrackColor));
             MessageBus.Current.SendMessage(new PianorollRefreshEvent("TrackColor"));
+        }
+        void OnMenuFullScreen(object sender, RoutedEventArgs args) {
+            this.WindowState = this.WindowState == WindowState.FullScreen
+                ? WindowState.Normal
+                : WindowState.FullScreen;
         }
         void OnMenuDegreeStyle(object sender, RoutedEventArgs args) {
             if (sender is MenuItem menu && int.TryParse(menu.Tag?.ToString(), out int tag)) {
@@ -1146,6 +1150,9 @@ namespace OpenUtau.App.Views {
                         Hide();
                         return true;
                     }
+                    break;
+                case Key.F11:
+                    OnMenuFullScreen(this, new RoutedEventArgs());
                     break;
                 case Key.Enter:
                     if (isNone) {
